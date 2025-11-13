@@ -1,0 +1,290 @@
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Swords, Github, Linkedin, Globe, Sparkles } from "lucide-react";
+
+// ===============================
+// JRPG Portfolio — Restored with Projects + Footer Links & Self-Tests
+// ===============================
+
+const player = {
+  name: "Thomas",
+  title: "Game Developer",
+  job: "Designer & Programmer",
+  level: 29,
+  hp: { cur: 320, max: 400 },
+  mp: { cur: 120, max: 150 },
+};
+
+// ---------------- SKILLS ----------------
+const gameDevSkills = [
+  { name: "Unity Engine", lvl: 5, desc: "URP/HDRP, editor tools, build pipelines, asset workflows." },
+  { name: "Shader Graph", lvl: 4, desc: "Stylized effects, post-processing, water, toon lighting." },
+  { name: "Design", lvl: 4, desc: "Systems-first design, pacing, feel, UX, player onboarding, typography." },
+  { name: "Procedural Generation", lvl: 4, desc: "Tilemaps, noise, modular dungeons, rule sets." },
+  { name: "Concept Art", lvl: 3, desc: "Character & environment sketching, thumbnails, mood boards." },
+  { name: "3D Modelling", lvl: 3, desc: "Blender, topology, UVs, texel density, trim sheets." },
+];
+
+const programmingSkills = [
+  { name: "C# Gameplay", lvl: 5, desc: "State machines, input, physics, AI, events, DOTween-style patterns." },
+  { name: "Networking", lvl: 3, desc: "Mirror/Netcode basics, lobbies, sync vars, authoritative sim." },
+  { name: "Python", lvl: 3, desc: "Automation tools, AI scripting, data wrangling, prototyping." },
+  { name: "HTML5", lvl: 3, desc: "Interactive web demos, responsive layouts, canvas/CSS animation." },
+  { name: "Blockchain", lvl: 2, desc: "Smart-contract basics, NFT gating, Unity wallet linking." },
+];
+
+const musicSkills = [
+  { name: "Guitar", lvl: 4, desc: "Acoustic and electric performance, rhythm and lead." },
+  { name: "Piano", lvl: 3, desc: "Composition, accompaniment, and chord voicings." },
+  { name: "Cello", lvl: 2, desc: "Classical performance and harmonic layering." },
+  { name: "Bass", lvl: 3, desc: "Groove composition, live performance, and recording." },
+  { name: "Drums", lvl: 3, desc: "Rhythm, timing, and beat production for multiple genres." },
+  { name: "Music Production", lvl: 4, desc: "Mixing, mastering, and arrangement using modern DAWs." },
+  { name: "FL Studio", lvl: 4, desc: "Electronic production and composition workflow." },
+  { name: "Ableton Live", lvl: 3, desc: "Loop-based composition, sound design, and live performance." },
+  { name: "Pro Tools", lvl: 2, desc: "Audio editing and post-production for film and games." },
+];
+
+const photoSkills = [
+  { name: "Photography", lvl: 4, desc: "Cinematic framing, lighting, composition, and post-editing." },
+  { name: "Cinematography", lvl: 4, desc: "Camera movement, shot design, and story-driven visuals." },
+  { name: "Adobe Lightroom", lvl: 4, desc: "Professional photo color grading and editing." },
+  { name: "Adobe Premiere Pro", lvl: 4, desc: "Video editing, pacing, and transitions for short films." },
+  { name: "DaVinci Resolve", lvl: 3, desc: "Color correction and film-like grading workflow." },
+];
+
+const artSkills = [
+  { name: "Oil Painting", lvl: 4, desc: "Traditional fine art painting, color theory, and composition." },
+  { name: "Sculpting", lvl: 3, desc: "Clay and digital sculpting for form and anatomy study." },
+  { name: "Design", lvl: 4, desc: "Visual design fundamentals, layout, and creative direction." },
+  { name: "Fine Art", lvl: 4, desc: "Classical techniques and artistic expression." },
+  { name: "Art Fundamentals", lvl: 5, desc: "Color, light, form, and perspective understanding." },
+  { name: "Interior Design", lvl: 3, desc: "Spatial planning, mood boards, and environmental composition." },
+];
+
+const qualifications = [
+  { name: "Bachelor of Game Design", desc: "Major in Interactive Media and Development." },
+  { name: "Cert III in Cybersecurity", desc: "Training in network defense, threat detection, and information security." },
+  { name: "Bachelor of Fine Art", desc: "Specialization in digital and traditional illustration for games." },
+];
+
+// ---------------- LINKS (Footer) ----------------
+const LINKS = [
+  { name: "Itch.io", icon: Globe, href: "#" },
+  { name: "GitHub", icon: Github, href: "#" },
+  { name: "LinkedIn", icon: Linkedin, href: "#" },
+];
+
+// ---------------- PROJECTS ----------------
+const studios = [
+  { name: "Little Lantern Games Studio", role: "Founder / Designer", summary: "Indie studio for puzzle, horror, cozy, and mystery games." },
+];
+
+const projectCategories = {
+  narrative: [
+    { name: "Everlong Express", role: "Designer / Programmer", summary: "Narrative-driven delivery sim exploring emotional distance and connection." },
+    { name: "When the Light Falters", role: "Designer / Writer", summary: "Atmospheric puzzle adventure about memory and fading worlds." },
+  ],
+  action: [
+    { name: "Tanuki Terror", role: "Designer / Programmer", summary: "Dark stealth-puzzle 3D game about cleansing yokai." },
+    { name: "Rumbleline", role: "Combat Designer", summary: "Competitive arena fighter blending rhythm mechanics with tactical timing." },
+    { name: "Songblade", role: "Programmer / Composer", summary: "Action rhythm RPG where attacks sync to dynamic music scores." },
+    { name: "Sports Blitz (TV Scene Hub)", role: "Engineer", summary: "Micro-game anthology linked via in-world TV hub." },
+  ],
+  cozy: [
+    { name: "Potion Maker's Cottage", role: "Solo Dev", summary: "Top-down cozy sim with crafting & NPC routines." },
+    { name: "Lo‑Fi Lounge", role: "Designer / Programmer", summary: "Multiplayer chill-beat lounge; players share loops." },
+    { name: "Professor's Lab", role: "Developer", summary: "Pokémon card shop with live stock checking." },
+  ],
+  tabletop: [
+    { name: "That Is Not Dead", role: "Designer", summary: "Lovecraftian card game with sanity and location effects." },
+    { name: "Zombie Survival RPG (Card Prototype)", role: "Designer", summary: "Co‑op card RPG with base fortification and dice mechanics." },
+  ],
+};
+
+// ---------------- COMPONENTS ----------------
+const Chrome = ({ title, children }) => (
+  <div className="relative rounded-2xl border-4 border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-950 p-4">
+    <div className="absolute -top-3 left-4 px-2 text-xs tracking-wider font-semibold bg-zinc-900 text-zinc-200">{title}</div>
+    {children}
+  </div>
+);
+
+const StatBar = ({ label, value, max, color }) => (
+  <div className="mb-2">
+    <div className="flex justify-between text-[11px] text-zinc-300">
+      <span>{label}</span>
+      <span>{value}/{max}</span>
+    </div>
+    <div className="h-2 w-full rounded bg-zinc-800 overflow-hidden">
+      <div className={`h-full ${color}`} style={{ width: `${(value / max) * 100}%` }} />
+    </div>
+  </div>
+);
+
+const SkillCard = (s) => (
+  <div key={s.name} className="border border-zinc-700 p-3 rounded-lg mb-2">
+    <div className="flex justify-between"><span className="text-zinc-200 font-semibold">{s.name}</span><span className="text-emerald-400 text-sm">Lv.{s.lvl}</span></div>
+    <p className="text-zinc-400 text-sm mt-1">{s.desc}</p>
+  </div>
+);
+
+const QualCard = (q) => (
+  <div key={q.name} className="border border-zinc-700 p-3 rounded-lg mb-2">
+    <div className="text-zinc-200 font-semibold">{q.name}</div>
+    <div className="text-zinc-400 text-sm mt-1">{q.desc}</div>
+  </div>
+);
+
+const ProjectCard = (p) => (
+  <div key={p.name} className="border border-zinc-700 p-3 rounded-lg mb-2">
+    <div className="text-zinc-200 font-semibold">{p.name}</div>
+    <div className="text-zinc-400 text-sm">{p.role}</div>
+    <div className="text-zinc-400 text-sm mt-1">{p.summary}</div>
+  </div>
+);
+
+const PanelSkills = () => (
+  <div className="grid md:grid-cols-2 gap-6">
+    <Chrome title="GAME DEVELOPMENT">{gameDevSkills.map((s) => SkillCard(s))}</Chrome>
+    <Chrome title="PROGRAMMING">{programmingSkills.map((s) => SkillCard(s))}</Chrome>
+    <Chrome title="MUSIC & AUDIO PRODUCTION">{musicSkills.map((s) => SkillCard(s))}</Chrome>
+    <Chrome title="PHOTOGRAPHY & CINEMATOGRAPHY">{photoSkills.map((s) => SkillCard(s))}</Chrome>
+    <Chrome title="ART">{artSkills.map((s) => SkillCard(s))}</Chrome>
+    <Chrome title="QUALIFICATIONS">{qualifications.map((q) => QualCard(q))}</Chrome>
+  </div>
+);
+
+const PanelProjects = () => (
+  <div className="grid md:grid-cols-3 gap-6">
+    <Chrome title="STUDIO">{studios.map(ProjectCard)}</Chrome>
+    <Chrome title="NARRATIVE PROJECTS">{projectCategories.narrative.map(ProjectCard)}</Chrome>
+    <Chrome title="ACTION & RHYTHM">{projectCategories.action.map(ProjectCard)}</Chrome>
+    <Chrome title="COZY PROJECTS">{projectCategories.cozy.map(ProjectCard)}</Chrome>
+    <Chrome title="TABLETOP & CARD GAMES">{projectCategories.tabletop.map(ProjectCard)}</Chrome>
+  </div>
+);
+
+// ---------------- RUNTIME SELF-TESTS ----------------
+function runSelfTests() {
+  const errs = [] as string[];
+
+  // 1) Footer links exist and have required fields
+  if (!Array.isArray(LINKS) || LINKS.length === 0) errs.push("LINKS missing/empty");
+  else {
+    LINKS.forEach((l, i) => {
+      if (!l || typeof l.name !== "string" || typeof l.href !== "string") errs.push(`LINKS[${i}] invalid`);
+    });
+  }
+
+  // 2) Skills groups non-empty
+  const groups = [gameDevSkills, programmingSkills, musicSkills, photoSkills, artSkills];
+  groups.forEach((g, i) => { if (!Array.isArray(g) || g.length === 0) errs.push(`skills group ${i} empty`); });
+
+  // 3) Projects categories exist & unique names
+  const allProjects = [
+    ...projectCategories.narrative,
+    ...projectCategories.action,
+    ...projectCategories.cozy,
+    ...projectCategories.tabletop,
+  ];
+  if (allProjects.length === 0) errs.push("no projects found");
+  const seen = new Set<string>();
+  for (const p of allProjects) {
+    if (seen.has(p.name)) errs.push(`duplicate project: ${p.name}`);
+    seen.add(p.name);
+  }
+
+  // 4) Player bars within max
+  if (player.hp.cur > player.hp.max) errs.push("HP exceeds max");
+  if (player.mp.cur > player.mp.max) errs.push("MP exceeds max");
+
+  return errs;
+}
+
+// ---------------- ROOT ----------------
+export default function PortfolioJRPG() {
+  const [panel, setPanel] = useState("skills");
+  const [testErrors, setTestErrors] = useState<string[]>([] as any);
+
+  useEffect(() => {
+    const e = runSelfTests();
+    setTestErrors(e);
+    if (e.length) {
+      console.group("JRPG Portfolio • Self-tests");
+      e.forEach((err) => console.error("✖", err));
+      console.groupEnd();
+    }
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-8 space-y-8">
+      {/* HUD */}
+      <div className="flex items-center justify-between max-w-6xl mx-auto">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-900 border-4 border-emerald-950 shadow-lg grid place-items-center">
+              <Swords className="w-6 h-6" />
+            </div>
+            <Sparkles className="absolute -right-2 -top-2 w-4 h-4 opacity-60" />
+          </div>
+          <div>
+            <div className="text-lg font-bold leading-tight">{player.name} <span className="text-zinc-400 font-medium">Lv.{player.level}</span></div>
+            <div className="text-xs text-zinc-400">{player.title} • {player.job}</div>
+          </div>
+        </div>
+        <div className="w-80">
+          <StatBar label="HP" value={player.hp.cur} max={player.hp.max} color="bg-rose-500" />
+          <StatBar label="MP" value={player.mp.cur} max={player.mp.max} color="bg-sky-500" />
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex justify-center gap-6">
+        <button
+          className={panel === "skills" ? "px-4 py-2 border rounded-lg border-emerald-400" : "px-4 py-2 border rounded-lg border-zinc-700 hover:border-zinc-500"}
+          onClick={() => setPanel("skills")}
+        >Skills</button>
+        <button
+          className={panel === "projects" ? "px-4 py-2 border rounded-lg border-emerald-400" : "px-4 py-2 border rounded-lg border-zinc-700 hover:border-zinc-500"}
+          onClick={() => setPanel("projects")}
+        >Projects</button>
+      </div>
+
+      {/* Panels */}
+      <div className="max-w-6xl mx-auto">
+        <AnimatePresence mode="wait">
+          {panel === "skills" && (
+            <motion.div key="skills" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <PanelSkills />
+            </motion.div>
+          )}
+          {panel === "projects" && (
+            <motion.div key="projects" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <PanelProjects />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <div className="max-w-6xl mx-auto">
+        <Chrome title="DIALOG">
+          <div className="text-sm">
+            {testErrors.length === 0
+              ? "All systems nominal. Click tabs to explore sections."
+              : `Self-tests found ${testErrors.length} issue(s). Open console for details.`}
+          </div>
+          <div className="mt-3 flex gap-3 flex-wrap">
+            {LINKS.map(({ name, icon: Icon, href }) => (
+              <a key={name} href={href} target="_blank" rel="noreferrer" className="flex items-center gap-2 border border-zinc-700 px-3 py-2 rounded-lg hover:border-emerald-400">
+                <Icon className="w-4 h-4 text-zinc-400" />
+                <span>{name}</span>
+              </a>
+            ))}
+          </div>
+        </Chrome>
+      </div>
+    </div>
+  );
+}
